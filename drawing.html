@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"   content="width=device-width, initial-scale=1.0, user-scalable=0, shrink-to-fit=no" />
+		<title>Drawing</title>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="800" height="550" style="border:1px solid #000000;">></canvas>
+		<button type="button" id="myButton">Get Coords</button>
+
+		<script type="text/javascript">
+			HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+
+			var lines = [];
+
+			var myButton = document.getElementById('myButton');
+			myButton.addEventListener('click', function() {
+				var str = '[';
+
+				for (let i = 0; i < lines.length; i+=2)
+					str += '[' + lines[i].x + ', ' + lines[i].y + ', ' + lines[i+1].x + ', ' + lines[i+1].y + '],';
+
+				console.log(str.slice(0, -1) + ']');
+			});
+
+			var myCanvas = document.getElementById('myCanvas');
+			var ctx = myCanvas.getContext("2d");
+			myCanvas.addEventListener('click', function() {
+				coords = myCanvas.relMouseCoords(event);
+				lines.push({ x: coords.x, y: coords.y });
+				if (lines.length % 2 === 1) {
+					ctx.moveTo(coords.x, coords.y);
+				}
+				else {
+					ctx.lineTo(coords.x, coords.y);
+					ctx.stroke();
+				}
+			});
+
+			function relMouseCoords(event){
+				var totalOffsetX = 0;
+				var totalOffsetY = 0;
+				var canvasX = 0;
+				var canvasY = 0;
+				var currentElement = this;
+
+				do{
+				totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+				totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+				}
+				while(currentElement = currentElement.offsetParent)
+
+				canvasX = event.pageX - totalOffsetX;
+				canvasY = event.pageY - totalOffsetY;
+
+				return {x:canvasX, y:canvasY}
+			}
+
+			(function () {
+				
+			})();
+		</script>
+	</body>
+</html>
